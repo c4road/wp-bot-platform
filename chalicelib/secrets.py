@@ -21,7 +21,7 @@ def get_binance_secret():
         )
     except ClientError as e:
         logging.error('[get_binance_secret] Something happening retrieving the secrets %s', repr(e))
-        
+        raise e
     else:
         if 'SecretString' in get_secret_value_response:
             secret_string = get_secret_value_response['SecretString']
