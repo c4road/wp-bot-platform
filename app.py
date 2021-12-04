@@ -7,9 +7,9 @@ from chalicelib.secrets import get_binance_secret
 app = Chalice(app_name='wp-bot-platform')
 API_KEY, SECRET_KEY = get_binance_secret()
 
-@app.route('/')
+@app.route('/ping')
 def index():
-    return {'hello': 'world'}
+    return {'data': 'pong'}
 
 @app.route('/coin/{coin}', methods=['GET'])
 def CoinUSDTHandler(coin=None):
