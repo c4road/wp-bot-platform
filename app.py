@@ -5,7 +5,7 @@ from binance.client import Client
 from chalicelib.secrets import get_binance_secret
 
 app = Chalice(app_name='wp-bot-platform')
-API_KEY, SECRET_KEY = get_binance_secret()
+app.log.setLevel(logging.DEBUG)
 
 @app.route('/ping')
 def index():
@@ -14,6 +14,7 @@ def index():
 @app.route('/coin/{coin}', methods=['GET'])
 def CoinUSDTHandler(coin=None):
 
+    API_KEY, SECRET_KEY = get_binance_secret()
     client = Client(API_KEY, SECRET_KEY)
     symbol = coin + 'USDT' if coin else 'BTCUSDT'
 
@@ -26,3 +27,10 @@ def CoinUSDTHandler(coin=None):
     }
 
     return  response
+
+@app.route('/whatsapp/ack', methods=['POST'])
+def WhatsappAckHandler():
+    body = app.current_request.json_body
+    app.log.debug("This is what is comming from twilio - %s", body)
+    
+    return
