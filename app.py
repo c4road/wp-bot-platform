@@ -1,4 +1,5 @@
 import logging
+from twilio.rest import Client 
 
 from chalice import Chalice
 from binance.client import Client
@@ -6,6 +7,9 @@ from chalicelib.secrets import get_binance_secret
 
 app = Chalice(app_name='wp-bot-platform')
 app.log.setLevel(logging.DEBUG)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
 
 @app.route('/ping')
 def index():
@@ -31,6 +35,19 @@ def CoinUSDTHandler(coin=None):
 @app.route('/whatsapp/ack', methods=['POST'])
 def WhatsappAckHandler():
     body = app.current_request.json_body
-    logging.info("This is what is comming from twilio")
-    
+    logger.info("This is what is comming from twilio - %s", body)
+
+    account_sid = 'ACa7d17651bc98465ae590d0a6e6443a06' 
+    auth_token = '4f6fa92850cfffc32d8049df89c32bfb'
+    client = Client(account_sid, auth_token) 
+
+    try:
+        message = client.messages.create( 
+                                    from_='whatsapp:+14155238886',  
+                                    body='que paso pana mio',      
+                                    to='whatsapp:+5491122520361' 
+                                ) 
+    except Exception as e:
+        logger.error("Something bad happened calling twilio - %s", e)
+
     return 
