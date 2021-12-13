@@ -31,6 +31,12 @@ def CoinUSDTHandler(coin=None):
 
 @app.route('/whatsapp/ack', methods=['POST'])
 def WhatsappAckHandler():
+    root = app.log
+    if root.handlers:
+        for handler in root.handlers:
+            root.removeHandler(handler)
+    root.basicConfig(format='%(asctime)s %(message)s',level=logging.DEBUG)
+    app.log = root.getLogger()
     body = app.current_request._json_body
     logging.info("[plain logging] This is what is comming from twilio - %s", body)
     app.log.info("[app.log] This is what is comming from twilio - %s", body)
