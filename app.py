@@ -7,13 +7,10 @@ from chalicelib.secrets import get_binance_secret, get_twilio_secret
 
 app = Chalice(app_name='wp-bot-platform')
 logging.basicConfig(level = logging.INFO)
-LOGGER = logging.getLogger()
+app.log.setLevel(logging.DEBUG)
 
 @app.route('/ping')
-def index(logger=LOGGER):
-    app.log.setLevel(logging.DEBUG)
-    logger.info('Pinging cloudfront')
-    LOGGER.info('Logging Using global logger')
+def index():
     app.log.info('logging cloudfront using chalice log')
     return {'data': 'pong'}
 
