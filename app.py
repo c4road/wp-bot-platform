@@ -1,5 +1,5 @@
 import logging
-from twilio.rest import Client
+from twilio.rest import Client as TwilioClient
 
 from chalice import Chalice, Response
 from binance.client import Client
@@ -41,8 +41,8 @@ def WhatsappAckHandler():
 
         app.log.info('This is comming from twilio body=%s, params=%s, query_params=%s', body, params, query_params)
         account_sid, auth_token = get_twilio_secret()
-        client = Client(account_sid, auth_token) 
-        client.messages.create( 
+        twilio = TwilioClient(account_sid, auth_token) 
+        twilio.messages.create( 
             from_='whatsapp:+14155238886',  
             body='que paso pana mio',      
             to='whatsapp:+5491122520361' 
