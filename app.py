@@ -1,7 +1,7 @@
 import logging
 from twilio.rest import Client 
 
-from chalice import Chalice
+from chalice import Chalice, Response
 from binance.client import Client
 from chalicelib.secrets import get_binance_secret, get_twilio_secret
 
@@ -50,5 +50,6 @@ def WhatsappAckHandler():
     except Exception as e:
         app.log.error('something happened in the ack handler %s', str(e))
         raise
-    response = {}
-    return response
+    return Response(body={},
+                    status_code=204,
+                    headers={'Content-Type': 'application/json'})
