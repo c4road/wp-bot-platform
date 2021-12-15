@@ -14,7 +14,7 @@ def index(logger=LOGGER):
     app.log.setLevel(logging.DEBUG)
     logger.info('Pinging cloudfront')
     LOGGER.info('Logging Using global logger')
-    app.log('logging cloudfront using chalice log')
+    app.log.info('logging cloudfront using chalice log')
     return {'data': 'pong'}
 
 @app.route('/coin/{coin}', methods=['GET'])
