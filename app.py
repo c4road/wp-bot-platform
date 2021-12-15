@@ -10,7 +10,8 @@ logging.basicConfig(level = logging.INFO)
 LOGGER = logging.getLogger()
 
 @app.route('/ping')
-def index():
+def index(logger=LOGGER):
+    logger.info('Pinging cloudfront')
     return {'data': 'pong'}
 
 @app.route('/coin/{coin}', methods=['GET'])
