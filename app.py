@@ -20,10 +20,11 @@ def CoinUSDTHandler(coin=None):
     API_KEY, SECRET_KEY = get_binance_secret()
     client = Client(API_KEY, SECRET_KEY)
     symbol = coin + 'USDT' if coin else 'BTCUSDT'
-
+    app.log.info('Fetching %s price', symbol)
     try:
         avg_price = client.get_avg_price(symbol=symbol)
     except Exception as e:
+        app.log.error('Something happened fetching %s symbol from Binance', symbol)
         raise e 
     response = {
         'price': avg_price.get('price')
