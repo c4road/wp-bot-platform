@@ -1,5 +1,5 @@
 import logging
-from twilio.rest import Client 
+from twilio.rest import Client
 
 from chalice import Chalice, Response
 from binance.client import Client
