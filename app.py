@@ -34,14 +34,18 @@ def CoinUSDTHandler(coin=None):
 
 @app.route('/whatsapp/ack', methods=['POST'])
 def WhatsappAckHandler():
-    body = app.current_request._json_body
-
-    account_sid, auth_token = get_twilio_secret()
-    client = Client(account_sid, auth_token) 
-    client.messages.create( 
-        from_='whatsapp:+14155238886',  
-        body='que paso pana mio',      
-        to='whatsapp:+5491122520361' 
-    ) 
-
-    return None
+    try:
+        body = app.current_request._json_body
+        app.log.info('This is comming from twilio - %s', body)
+        account_sid, auth_token = get_twilio_secret()
+        client = Client(account_sid, auth_token) 
+        client.messages.create( 
+            from_='whatsapp:+14155238886',  
+            body='que paso pana mio',      
+            to='whatsapp:+5491122520361' 
+        ) 
+    except Exception as e:
+        app.log.error('something happened in the ack handler %s', str(e))
+        raise
+    response = {}
+    return response
