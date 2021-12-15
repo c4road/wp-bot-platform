@@ -43,6 +43,9 @@ def _get_secret(name, region="us-east-1"):
     except ClientError as e:
         logging.error('[_get_secret] Something happening retrieving the secrets %s', repr(e))
         raise e
+    except Exception as e:
+        logging.error('[_get_secret] Unknown exception - %s', repr(e))
+        raise e
     else:
         if 'SecretString' in get_secret_value_response:
             secret_string = get_secret_value_response['SecretString']
