@@ -42,11 +42,15 @@ def WhatsappAckHandler():
         app.log.info('This is comming from twilio body=%s, params=%s, query_params=%s', body, params, query_params)
         account_sid, auth_token = get_twilio_secret()
         twilio = TwilioClient(account_sid, auth_token) 
-        twilio.messages.create( 
+        message = twilio.messages.create( 
             from_='whatsapp:+14155238886',  
             body='que paso pana mio',      
             to='whatsapp:+5491122520361' 
         ) 
+        app.log.info('Message created: message_id=%s', message)
+    except twilio.base.exceptions.TwilioRestException as e:
+        app.log.error('something happened in the ack handler %s', str(e))
+        raise 
     except Exception as e:
         app.log.error('something happened in the ack handler %s', str(e))
         raise
