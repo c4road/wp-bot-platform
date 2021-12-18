@@ -36,8 +36,11 @@ def CoinUSDTHandler(coin=None):
 @app.route('/whatsapp/ack', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def WhatsappAckHandler():
     request = app.current_request.to_dict()
+    body = app.current_request.body
+    raw_body = app.current_request.raw_body
 
     app.log.info('This is comming from twilio request=%s', request)
+    app.log.info('Body of the requests - body=%s, raw_body=%s', body, raw_body)
     account_sid, auth_token = get_twilio_secret()
     try:
         twilio = TwilioClient(account_sid, auth_token) 
