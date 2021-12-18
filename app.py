@@ -57,9 +57,9 @@ def WhatsappAckHandler():
     try:
         twilio = TwilioClient(account_sid, auth_token) 
         message = twilio.messages.create( 
-            from_=message.get('Sender').get('Number'),
+            from_=message.get('Receiver'),
             body=response_bodies[random.randint(0,9)],      
-            to=message.get('Receiver')
+            to=message.get('Sender').get('Number')
         ) 
     except TwilioException as e:
         error = {
@@ -69,7 +69,7 @@ def WhatsappAckHandler():
             'message': e.msg,
             'code': e.code,
             'method': e.method,
-            'details': e.exception,
+            'details': e.details,
         }
         app.log.error('Twilio error: %s', error)
         return Response(body=error,
