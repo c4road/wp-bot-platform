@@ -39,7 +39,7 @@ def CoinUSDTHandler(coin=None):
 @app.route('/whatsapp/ack', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def WhatsappAckHandler():
     account_sid, auth_token = get_twilio_secret()
-    message = get_message(app.current_request.raw_body)
+    message = get_twilio_message(app.current_request.raw_body)
     
     app.log.info('Processing incoming message from twilio %s', message)
     response_bodies = [
