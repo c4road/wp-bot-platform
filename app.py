@@ -1,10 +1,13 @@
 import logging
+import random
+
+from binance.client import Client
+from chalice import Chalice, Response
 from twilio.rest import Client as TwilioClient
 from twilio.base.exceptions import TwilioException
 
-from chalice import Chalice, Response
-from binance.client import Client
 from chalicelib.secrets import get_binance_secret, get_twilio_secret
+from chalicelib.twilio import get_twilio_message
 
 app = Chalice(app_name='wp-bot-platform')
 logging.basicConfig(level = logging.INFO)
@@ -35,19 +38,28 @@ def CoinUSDTHandler(coin=None):
 
 @app.route('/whatsapp/ack', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def WhatsappAckHandler():
-    request = app.current_request.to_dict()
-    body = app.current_request.json_body
-    raw_body = app.current_request.raw_body
-
-    app.log.info('This is comming from twilio request=%s', request)
-    app.log.info('Body of the requests - body=%s, raw_body=%s', body, raw_body)
     account_sid, auth_token = get_twilio_secret()
+    message = get_message(app.current_request.raw_body)
+    
+    app.log.info('Processing incoming message from twilio %s', message)
+    response_bodies = [
+        "todo bien por aqui",
+        "que paso pana mio",
+        "que tal va tu dia",
+        "Hola soy un bot", 
+        "Que quieres hacer hoy?",
+        "La puta que te pario",
+        "Como te llamas",
+        "La concha de la lora",
+        "Disculpa no quise insultarte",
+        "Espero que estes bien"
+    ]
     try:
         twilio = TwilioClient(account_sid, auth_token) 
         message = twilio.messages.create( 
-            from_='whatsapp:+14155238886',
-            body='que paso pana mio',      
-            to='whatsapp:+5491122520361' 
+            from_=message.get('Sender').get('Number'),
+            body=response_bodies[random.randint(0,9)],      
+            to=message.get('Receiver')
         ) 
     except TwilioException as e:
         error = {
