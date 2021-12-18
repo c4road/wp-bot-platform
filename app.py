@@ -1,5 +1,6 @@
 import logging
 from twilio.rest import Client as TwilioClient
+from twilio.base.exceptions import TwilioException
 
 from chalice import Chalice, Response
 from binance.client import Client
@@ -34,26 +35,39 @@ def CoinUSDTHandler(coin=None):
 
 @app.route('/whatsapp/ack', methods=['POST'], content_types=['application/x-www-form-urlencoded'])
 def WhatsappAckHandler():
-    try:
-        body = app.current_request.json_body
-        params = app.current_request.uri_params
-        query_params = app.current_request.query_params
+    request = app.current_request.to_dict()
 
-        app.log.info('This is comming from twilio body=%s, params=%s, query_params=%s', body, params, query_params)
-        account_sid, auth_token = get_twilio_secret()
+    app.log.info('This is comming from twilio request=%s', request)
+    account_sid, auth_token = get_twilio_secret()
+    try:
         twilio = TwilioClient(account_sid, auth_token) 
         message = twilio.messages.create( 
-            from_='whatsapp:+14155238886',  
+            from_='whatsapp:+14155238886',
             body='que paso pana mio',      
             to='whatsapp:+5491122520361' 
         ) 
-        app.log.info('Message created: message_id=%s', message)
-    except twilio.base.exceptions.TwilioRestException as e:
-        app.log.error('something happened in the ack handler %s', str(e))
-        raise 
+    except TwilioException as e:
+        error = {
+            'name': str(e),
+            'uri': e.uri,
+            'status': e.status,
+            'message': e.msg,
+            'code': e.code,
+            'method': e.method,
+            'details': e.exception,
+        }
+        app.log.error('Twilio error: %s', error)
+        return Response(body=error,
+                        status_code=500,
+                        headers={'Content-Type': 'application/json'})
     except Exception as e:
-        app.log.error('something happened in the ack handler %s', str(e))
-        raise
-    return Response(body={},
-                    status_code=204,
-                    headers={'Content-Type': 'application/json'})
+        error = {'error': str(e)}
+        app.log.error('Unknown Exception - %s', error)
+        return Response(body=error,
+                        status_code=500,
+                        headers={'Content-Type': 'application/json'})
+    else:
+        app.log.info('Message created: message_id=%s', message)
+        return Response(body={},
+                        status_code=204,
+                        headers={'Content-Type': 'application/json'})
